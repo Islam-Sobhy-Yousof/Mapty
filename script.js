@@ -19,17 +19,34 @@ navigator.geolocation.getCurrentPosition(
     const { latitude } = position.coords;
     const { longitude } = position.coords;
     const currentMap = `https://www.google.com/maps/@=${latitude},${longitude}`;
+    console.log(currentMap);
     const coords = [latitude, longitude];
     const map = L.map('map').setView(coords, 13);
     L.tileLayer('https://tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
-      attribution:
-        'Free Palestine 🇵🇸 ',
+      attribution: 'Free Palestine 🇵🇸 ',
     }).addTo(map);
+    /*
+        - Adding a marker at whre we click 
+        - we can't add an event on the map container instead we will add it on the map variable
+        - we don't use the addEvenentListener instead use the on method which leaflet provide us with
+    */
 
-    L.marker(coords)
-      .addTo(map)
-      .bindPopup('A pretty CSS popup.<br> Easily customizable.')
-      .openPopup();
+    map.on('click', function (event) {
+      const { lat, lng } = event.latlng;
+      const coords = [lat, lng];
+      L.marker(coords)
+        .addTo(map)
+        .bindPopup(
+          L.popup({
+            maxWidth: 250,
+            minWidth: 100,
+            autoClose: false,
+            closeOnClick: false,
+            className: 'running-popup',
+          })
+        ).setPopupContent('Workou 🏃')
+        .openPopup();
+    });
   },
   function () {
     alert('CAN NOT GET THE CURRENT LOCATION! 🖐️');
