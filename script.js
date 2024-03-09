@@ -22,8 +22,8 @@ class Workout {
     this.distance = distance;
     this.duration = duration;
   }
-  _setDescription(){
-    return this.description = `${this.type} on ${this.date}`;
+  _setDescription() {
+    return (this.description = `${this.type} on ${this.date}`);
   }
 }
 class Running extends Workout {
@@ -52,7 +52,7 @@ class Cycling extends Workout {
     this._setDescription();
   }
   calcSpeed() {
-    this.speed = (this.distance / (this.duration / 60) ).toFixed(1);
+    this.speed = (this.distance / (this.duration / 60)).toFixed(1);
     return this.speed;
   }
 }
@@ -64,6 +64,18 @@ class App {
     this._getPosition();
     form.addEventListener('submit', this._newWorkout.bind(this));
     inputType.addEventListener('change', this._toggelElevationField.bind(this));
+    containerWorkouts.addEventListener('click', this._moveMap.bind(this));
+  }
+  _moveMap(event) {
+    const targetElement = event.target.closest('.workout');
+    if (targetElement) {
+      const id = targetElement.dataset.id;
+      const clickedWorkout = this.#wokrouts.find(ele => ele.id === id);
+      this.#map.flyTo(clickedWorkout.coords, 13, {
+        animate: true,
+        duration: 1,
+      });
+    }
   }
   _getPosition() {
     navigator.geolocation.getCurrentPosition(this._loadMap.bind(this), () =>
@@ -80,7 +92,7 @@ class App {
     }).addTo(this.#map);
     this.#map.on('click', this._showForm.bind(this));
   }
-  _hideForm(){
+  _hideForm() {
     form.classList.add('hidden');
     inputDistance.value =
       inputDuration.value =
@@ -124,7 +136,9 @@ class App {
           <div class="workout__details">
             <span class="workout__icon">${workout.wokroutUnitIcon}</span>
             <span class="workout__value">${
-              workout.type === 'Running' ? workout.cadence : workout.elevationGain
+              workout.type === 'Running'
+                ? workout.cadence
+                : workout.elevationGain
             }</span>
             <span class="workout__unit">${
               workout.type === 'Running' ? 'spm' : 'm'
