@@ -62,9 +62,18 @@ class App {
   #wokrouts = [];
   constructor() {
     this._getPosition();
+    this._loadMapData();
     form.addEventListener('submit', this._newWorkout.bind(this));
     inputType.addEventListener('change', this._toggelElevationField.bind(this));
     containerWorkouts.addEventListener('click', this._moveMap.bind(this));
+  }
+  _loadMapData() {
+    if (!localStorage.length) return;
+    const stringLocal = localStorage.getItem('WorkoutsArray');
+    this.#wokrouts = JSON.parse(stringLocal);
+    this.#wokrouts.forEach(workout => {
+      this._displayWorkout(workout);
+    });
   }
   _moveMap(event) {
     const targetElement = event.target.closest('.workout');
@@ -91,6 +100,9 @@ class App {
       attribution: 'Free Palestine 🇵🇸 ',
     }).addTo(this.#map);
     this.#map.on('click', this._showForm.bind(this));
+    this.#wokrouts.forEach(workout => {
+      this._renderWorkoutMarker(workout);
+    });
   }
   _hideForm() {
     form.classList.add('hidden');
@@ -182,7 +194,7 @@ class App {
       workoutObj = new Cycling(coords, distance, duration, elevation);
     }
     this.#wokrouts.push(workoutObj);
-    console.log(this.#wokrouts);
+    this._storeWorkout(workoutObj);
     //display the workout on the list
     this._displayWorkout(workoutObj);
 
@@ -207,6 +219,17 @@ class App {
       )
       .setPopupContent(`${workout.description} ${workout.workoutTypeIcon}`)
       .openPopup();
+  }
+  _storeWorkout(workout) {
+    const currentWorkouts =
+      JSON.parse(localStorage.getItem('WorkoutsArray')) || [];
+    currentWorkouts.push(workout);
+    const workoutString = JSON.stringify(currentWorkouts);
+    localStorage.setItem('WorkoutsArray', workoutString);
+  }
+  reset() {
+    localStorage.removeItem('WorkoutsArray');
+    location.reload();
   }
 }
 const app = new App();
