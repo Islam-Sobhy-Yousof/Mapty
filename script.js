@@ -68,8 +68,8 @@ class App {
     containerWorkouts.addEventListener('click', this._moveMap.bind(this));
   }
   _loadMapData() {
-    if (!localStorage.length) return;
     const stringLocal = localStorage.getItem('WorkoutsArray');
+    if (!stringLocal) return;
     this.#wokrouts = JSON.parse(stringLocal);
     this.#wokrouts.forEach(workout => {
       this._displayWorkout(workout);
